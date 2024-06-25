@@ -1,0 +1,39 @@
+import streamlit as st
+from main import tokenizer, model
+
+st.title("Restaurant Idea Generator App")
+
+# Streamlit app interface with dropdown menu
+selected_cuisine = st.selectbox("Select a cuisine:", ["Bengali", "Indian", "Italian", "Mexican", "Japanese"])
+generate_button = st.button("Generate Ideas")
+
+if generate_button:
+    if selected_cuisine:
+        try:
+            # Generate restaurant name
+            input_text = f"Create a fancy restaurant name for {selected_cuisine}."
+            input_ids = tokenizer.encode(input_text, return_tensors="pt")
+
+            output_name = model.generate(input_ids, max_length=50, num_return_sequences=1, no_repeat_ngram_size=2)
+            generated_name = tokenizer.decode(output_name[0], skip_special_tokens=True)
+
+            st.subheader("Generated Restaurant Name:")
+            st.write(generated_name)
+
+            # Generate food menu
+            menu_input_text = f"Create a food menu for {selected_cuisine}."
+            menu_input_ids = tokenizer.encode(menu_input_text, return_tensors="pt")
+
+            output_menus = model.generate(menu_input_ids, max_length=200, num_return_sequences=1, no_repeat_ngram_size=2)
+
+            st.subheader("Generated Food Menu:")
+            for i, menu_output in enumerate(output_menus):
+                generated_menu = tokenizer.decode(menu_output, skip_special_tokens=True)
+                st.write(f"Menu {i + 1}:")
+                st.write(generated_menu)
+
+        except Exception as e:
+            st.error(f"Error generating ideas: {e}")
+
+    else:
+        st.warning("Please select a cuisine to generate ideas.")
