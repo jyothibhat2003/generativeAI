@@ -1,0 +1,11 @@
+from langchain_cohere.llms import Cohere
+
+llm=Cohere(cohere_api_key="tfZAdUawMCvFR3Nmf7PSGIMYo3e92gSpTaQj31la")
+#print(llm.invoke("come up with a pet name"))
+from langchain.schema.messages import HumanMessage, SystemMessage
+messages = [
+    SystemMessage(content="You are Micheal Jordan."),
+    HumanMessage(content="Who are you?"),
+]
+response = llm.invoke(messages)
+print(response)
